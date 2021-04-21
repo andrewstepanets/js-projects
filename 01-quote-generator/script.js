@@ -29,8 +29,10 @@ function loading() {
 // Hide Loading 
 
 function complete() {
-  quoteContainer.hidden = false;
-  loader.hidden = true;
+  if (!loader.hidden) {
+    quoteContainer.hidden = false;
+    loader.hidden = true;
+  }
 }
 
 function newRandomQuotes() {
@@ -54,22 +56,50 @@ function newRandomQuotes() {
 
 // Get Quotes From API 
 
-async function getQuotes() {
+// async function getQuotes() {
+//   loading();
+//   const apiUrl = 'https://type.fit/api/quotes';
+//   try {
+//     const response = await fetch(apiUrl)
+//     apiQuotes = await response.json()
+//     newRandomQuotes()
+//   } catch (error) {
+//     // Catch Error Here 
+//     console.log(error);
+//   }
+// }
+
+// Solving Problem with CORS policy
+
+async function getQuote() {
   loading();
-  const apiUrl = 'https://type.fit/api/quotes';
-  // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  // const apiUrl = 'http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  const apiUrl = 'http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
   try {
-    // const response = await fetch(proxyUrl + apiUrl)
-    const response = await fetch(apiUrl)
-    apiQuotes = await response.json()
-    newRandomQuotes()
+    const response = await fetch(proxyUrl + apiUrl)
+    const data = await response.json()
+    // Check if author is 'Unknown'
+    if (data.quoteAuthor == '') {
+      authorText.innerText = 'Unknown Author'
+    } else {
+      authorText.innerText = data.quoteAuthor
+    }
+
+    // Reduce font size for long quotes
+
+    if (data.authorText.length > 120) {
+      quoteText.classList.add('long-quote')
+    } else {
+      quoteText.classList.remove('long-quote')
+    }
+    authorText.innerText = data.quoteAuthor
+    // Stop Loading 
+    complete();
   } catch (error) {
     // Catch Error Here 
-    console.log(error);
+    // getQuote()
   }
 }
-
 
 // Tweet Quote 
 
@@ -82,4 +112,4 @@ function tweetQuote() {
 newQuoteBtn.addEventListener('click', newRandomQuotes)
 twitterBtn.addEventListener('click', tweetQuote)
 
-getQuotes()
+getQuote()
