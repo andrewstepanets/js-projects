@@ -19,16 +19,13 @@ const loader = document.querySelector('#loader')
 
 let apiQuotes = []
 
-// Show loading
 
-function loading() {
+function showLoadingSpinner() {
   loader.hidden = false;
   quoteContainer.hidden = true;
 }
 
-// Hide Loading 
-
-function complete() {
+function removeLoadingSpinner() {
   if (!loader.hidden) {
     quoteContainer.hidden = false;
     loader.hidden = true;
@@ -36,7 +33,7 @@ function complete() {
 }
 
 function newRandomQuotes() {
-  loading()
+  showLoadingSpinner()
   // Pick a random quote from apiQuotes array
   const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)]
   // check if Author field is blank and replace it 
@@ -51,7 +48,7 @@ function newRandomQuotes() {
 
   // Set Quote, Hide Loader
   quoteText.textContent = quote.text;
-  complete();
+  removeLoadingSpinner();
 }
 
 // Get Quotes From API 
@@ -97,7 +94,7 @@ async function getQuote() {
     complete();
   } catch (error) {
     // Catch Error Here 
-    // getQuote()
+    console.log(error);
   }
 }
 
